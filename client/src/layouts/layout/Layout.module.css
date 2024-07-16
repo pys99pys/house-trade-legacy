@@ -1,0 +1,19 @@
+.header {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  box-shadow: 0 0 10px #ddd;
+}
+
+.header h1 {
+  font-size: 1.25rem;
+}
+
+.main {
+  width: 1024px;
+  margin: 0 auto;
+  padding-top: 3rem;
+  padding-bottom: 5rem;
+}

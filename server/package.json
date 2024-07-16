@@ -1,0 +1,19 @@
+{
+  "name": "house-trade-server",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "dev": "bun --watch index.ts"
+  },
+  "dependencies": {
+    "@stricjs/router": "^5.0.6",
+    "@stricjs/utils": "^2.0.3",
+    "node-html-parser": "^6.1.12"
+  }
+}

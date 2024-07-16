@@ -1,0 +1,17 @@
+@import "./reset.css";
+@import "./variables.css";
+
+html {
+  font-size: var(--font-size);
+}
+
+body {
+  background-color: #f9f9f9;
+}
+
+body,
+input,
+select,
+button {
+  font-family: "Noto Sans KR", sans-serif;
+}

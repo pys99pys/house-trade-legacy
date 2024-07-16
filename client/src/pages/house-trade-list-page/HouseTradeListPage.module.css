@@ -1,0 +1,12 @@
+.houseTradeListPage {
+  display: flex;
+  flex-direction: column;
+}
+
+.favoriteList {
+  margin-top: 1rem;
+}
+
+.filterForm {
+  margin-top: 2.5rem;
+}

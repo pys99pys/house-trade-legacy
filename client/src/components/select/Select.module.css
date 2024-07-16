@@ -1,0 +1,57 @@
+.select {
+  height: var(--form-height);
+  padding: 0 1rem;
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  background-color: white;
+}
+
+.arrow {
+  margin-left: 1.5rem;
+  font-size: 1.25rem;
+  transform: translateY(-3px);
+}
+
+.select .list {
+  min-width: calc(100% + 2px);
+  max-height: 15rem;
+  padding: 0.5rem 0;
+  display: none;
+  position: absolute;
+  top: calc(100% - 1px);
+  left: -1px;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--border-radius);
+  background-color: white;
+  overflow-x: hidden;
+  overflow-y: ;
+}
+
+.select .list ul {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+.select .list ul li {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.select:hover {
+  border-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.select:hover .list {
+  display: block;
+}
+
+.select .list ul li:hover {
+  background-color: #f2f2f2;
+}

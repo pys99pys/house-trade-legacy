@@ -1,0 +1,15 @@
+.input {
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  outline: none;
+}
+
+.default {
+  height: var(--form-height);
+  padding: 0 1rem;
+}
+
+.small {
+  height: var(--form-height-small);
+  padding: 0 0.75rem;
+}

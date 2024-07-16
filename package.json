@@ -1,0 +1,11 @@
+{
+  "name": "house-trade",
+  "version": "1.0.0",
+  "scripts": {
+    "kill": "kill $(lsof -t -i:7998)",
+    "open": "open -a 'Google Chrome' 'http://localhost:7998'",
+    "start": "yarn open & yarn start:client & yarn start:server",
+    "start:client": "cd ./client && yarn dev",
+    "start:server": "cd ./server && yarn dev"
+  }
+}
