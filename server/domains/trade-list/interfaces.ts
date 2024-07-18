@@ -4,4 +4,5 @@ export interface TradeItem {
   size: number;
   floor: number;
   amount: number;
+  maxAmount: number;
 }

@@ -8,6 +8,7 @@ import { getValue, setValue } from "../../utils/storageUtils";
 import {
   filterItems,
   getStorageValue,
+  parseToAmountText,
   parseToAreaSize,
   parseToFlatSize,
   sliceItems,
@@ -130,6 +131,14 @@ const TradeItemTable: FC<TradeItemTableProps> = () => {
             )}
           </button>
         </div>
+        <div>
+          <button onClick={() => handleClickHeader("amount")}>
+            신고가
+            {order[0] === "amount" && (
+              <span className={styles[order[1]]}>▾</span>
+            )}
+          </button>
+        </div>
       </div>
 
       <div className={styles.body}>
@@ -151,7 +160,8 @@ const TradeItemTable: FC<TradeItemTableProps> = () => {
               <small>({parseToAreaSize(item.size)}㎡)</small>
             </div>
             <div>{item.floor}층</div>
-            <div>{item.amount / 100000000}억원</div>
+            <div>{parseToAmountText(item.amount)}</div>
+            <div>{parseToAmountText(item.maxAmount)}</div>
           </div>
         ))}
       </div>

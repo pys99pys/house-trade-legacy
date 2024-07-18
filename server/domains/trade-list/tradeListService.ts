@@ -11,7 +11,7 @@ const parseSize = (str: string): number => {
 const parseTradeAmount = (str: string): number => {
   let amount = 0;
 
-  const [억, 천만_or_백만] = str.split("억");
+  const [억, 천만_or_백만] = str.replace(" (신)", "").split("억");
   amount += Number(억) * 100000000;
 
   if (천만_or_백만.includes("천")) {
@@ -35,6 +35,7 @@ const parseTableRow = (tr: HTMLElement): TradeItem => {
     size: -1,
     floor: -1,
     amount: -1,
+    maxAmount: -1,
   };
 
   tr.querySelectorAll("td").forEach((td, tdIndex) => {
@@ -60,6 +61,9 @@ const parseTableRow = (tr: HTMLElement): TradeItem => {
 
     if (tdIndex % 3 === 2) {
       item.amount = parseTradeAmount(content[0]);
+      item.maxAmount = parseTradeAmount(
+        content[2].includes("억") ? content[2] : content[3]
+      );
     }
   });
 
