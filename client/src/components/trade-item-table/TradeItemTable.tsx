@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, ReactNode, useEffect, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
 import cx from "classnames";
 import useTradeListQuery, { TradeItem } from "../../queries/useTradeListQuery";
@@ -11,6 +11,7 @@ import {
   parseToAmountText,
   parseToAreaSize,
   parseToFlatSize,
+  parseToFloorText,
   sliceItems,
   sortItems,
 } from "../../utils/tradeItemUtils";
@@ -94,74 +95,51 @@ const TradeItemTable: FC<TradeItemTableProps> = () => {
     return null;
   }
 
+  const isActived = (item: TradeItem) =>
+    savedList.some(
+      (savedItem) => savedItem === getStorageValue(search.sigungu, item.name)
+    );
+
+  const createHeaderCell = (key: keyof TradeItem, label: string) => (
+    <div>
+      <button onClick={() => handleClickHeader(key)}>
+        {label}
+        {order[0] === key && <span className={styles[order[1]]}>▾</span>}
+      </button>
+    </div>
+  );
+
+  const createBodyCell = (label: ReactNode) => <div>{label}</div>;
+
   return (
     <div className={styles.tradeItemTable}>
       <div className={styles.header}>
-        <div>
-          <button onClick={() => handleClickHeader("date")}>
-            거래일
-            {order[0] === "date" && <span className={styles[order[1]]}>▾</span>}
-          </button>
-        </div>
-        <div>
-          <button onClick={() => handleClickHeader("name")}>
-            아파트명
-            {order[0] === "name" && <span className={styles[order[1]]}>▾</span>}
-          </button>
-        </div>
-        <div>
-          <button onClick={() => handleClickHeader("size")}>
-            평수
-            {order[0] === "size" && <span className={styles[order[1]]}>▾</span>}
-          </button>
-        </div>
-        <div>
-          <button onClick={() => handleClickHeader("floor")}>
-            층
-            {order[0] === "floor" && (
-              <span className={styles[order[1]]}>▾</span>
-            )}
-          </button>
-        </div>
-        <div>
-          <button onClick={() => handleClickHeader("amount")}>
-            거래가격
-            {order[0] === "amount" && (
-              <span className={styles[order[1]]}>▾</span>
-            )}
-          </button>
-        </div>
-        <div>
-          <button onClick={() => handleClickHeader("amount")}>
-            신고가
-            {order[0] === "amount" && (
-              <span className={styles[order[1]]}>▾</span>
-            )}
-          </button>
-        </div>
+        {createHeaderCell("date", "거래일")}
+        {createHeaderCell("name", "아파트명")}
+        {createHeaderCell("size", "평수")}
+        {createHeaderCell("floor", "층")}
+        {createHeaderCell("amount", "거래가격")}
+        {createHeaderCell("maxAmount", "신고가")}
       </div>
 
       <div className={styles.body}>
         {list.map((item, i) => (
           <div
             key={i}
-            className={cx(styles.row, {
-              [styles.active]: savedList.some(
-                (savedItem) =>
-                  savedItem === getStorageValue(search.sigungu, item.name)
-              ),
-            })}
+            className={cx(styles.row, { [styles.active]: isActived(item) })}
             onClick={() => handleClickRow(item)}
           >
-            <div>{item.date}</div>
-            <div>{item.name}</div>
-            <div>
-              {parseToFlatSize(item.size)}평
-              <small>({parseToAreaSize(item.size)}㎡)</small>
-            </div>
-            <div>{item.floor}층</div>
-            <div>{parseToAmountText(item.amount)}</div>
-            <div>{parseToAmountText(item.maxAmount)}</div>
+            {createBodyCell(<>{item.date}</>)}
+            {createBodyCell(<>{item.name}</>)}
+            {createBodyCell(
+              <>
+                {parseToFlatSize(item.size)}평
+                <small>({parseToAreaSize(item.size)}㎡)</small>
+              </>
+            )}
+            {createBodyCell(<>{parseToFloorText(item.floor)}</>)}
+            {createBodyCell(<>{parseToAmountText(item.amount)}</>)}
+            {createBodyCell(<>{parseToAmountText(item.maxAmount)}</>)}
           </div>
         ))}
       </div>

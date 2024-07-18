@@ -70,5 +70,7 @@ export const parseToAreaSize = (originSize: number): number => {
   return Math.round(originSize * 100) / 100;
 };
 
+export const parseToFloorText = (floor: number): string => `${floor}층`;
+
 export const parseToAmountText = (amount: number): string =>
   `${amount / 100000000}억원`;
