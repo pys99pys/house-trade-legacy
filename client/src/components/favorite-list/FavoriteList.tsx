@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from "react";
 import sigunguCodeObserver from "../../observers/sigunguCodeObserver";
 import { getValue, setValue } from "../../utils/storageUtils";
 import { getSidoWithCode, getSigunguWithCode } from "../../utils/cityDataUtils";
-import { FAVORITE_LIST } from "../../constants/storageKeys";
+import { STORAGE_KEY_FAVORITE_LIST } from "../../constants/storageKeys";
 import Button from "../button/Button";
 
 import styles from "./FavoriteList.module.css";
@@ -20,7 +20,9 @@ const sortCodes = (codes: string[]) => {
 };
 
 const FavoriteList: FC<FavoriteListProps> = () => {
-  const [codes, setCodes] = useState<string[]>(getValue(FAVORITE_LIST) ?? []);
+  const [codes, setCodes] = useState<string[]>(
+    getValue(STORAGE_KEY_FAVORITE_LIST) ?? []
+  );
 
   useEffect(() => {
     sigunguCodeObserver.regist("favorite-list", (payload) => {
@@ -35,7 +37,7 @@ const FavoriteList: FC<FavoriteListProps> = () => {
   });
 
   useEffect(() => {
-    setValue(FAVORITE_LIST, codes);
+    setValue(STORAGE_KEY_FAVORITE_LIST, codes);
   }, [codes]);
 
   function registFavoriteAddEvent(code: string) {

@@ -1,5 +1,5 @@
 import { TradeItem } from "../queries/useTradeListQuery";
-import { FilterFormType } from "../interfaces/FilterForm";
+import { FilterType } from "../interfaces/Filter";
 
 export const getStorageValue = (code: string, name: string) =>
   `${code}_${name}`;
@@ -13,7 +13,7 @@ export const filterItems = (
   }: {
     code: string;
     savedItems: string[];
-    filter: FilterFormType;
+    filter: FilterType;
   }
 ) =>
   items.filter((item) => {
@@ -34,13 +34,10 @@ export const filterItems = (
     return includedApartName && includedBaseSize && includedSavedList;
   });
 
-export const sortItems = ({
-  items,
-  order,
-}: {
-  items: TradeItem[];
-  order: [keyof TradeItem, "asc" | "desc"];
-}): TradeItem[] => {
+export const sortItems = (
+  items: TradeItem[],
+  order: [keyof TradeItem, "asc" | "desc"]
+): TradeItem[] => {
   return items.sort((a, b) => {
     if (a[order[0]] > b[order[0]]) {
       return order[1] === "asc" ? 1 : -1;
@@ -50,15 +47,16 @@ export const sortItems = ({
   });
 };
 
-export const sliceItems = ({
-  items,
-  page,
-  perPage,
-}: {
-  items: TradeItem[];
-  page: number;
-  perPage: number;
-}) => items.slice((page - 1) * perPage, page * perPage);
+export const sliceItems = (
+  items: TradeItem[],
+  {
+    page,
+    perPage,
+  }: {
+    page: number;
+    perPage: number;
+  }
+) => items.slice((page - 1) * perPage, page * perPage);
 
 export const parseToFlatSize = (areaSize: number): number => {
   const area = areaSize * 0.3025;

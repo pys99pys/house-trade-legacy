@@ -1,9 +1,8 @@
 import { FC } from "react";
-import TradeItemTable from "../../components/trade-item-table/TradeItemTable";
+import TradeList from "../../components/trade-list/TradeList";
 import SearchForm from "../../components/search-form/SearchForm";
 import styles from "./HouseTradeListPage.module.css";
 import FavoriteList from "../../components/favorite-list/FavoriteList";
-import FilterForm from "../../components/filter-form/FilterForm";
 
 interface HouseTradeListPageProps {}
 
@@ -14,10 +13,9 @@ const HouseTradeListPage: FC<HouseTradeListPageProps> = () => {
       <div className={styles.favoriteList}>
         <FavoriteList />
       </div>
-      <div className={styles.filterForm}>
-        <FilterForm />
+      <div className={styles.tradeList}>
+        <TradeList />
       </div>
-      <TradeItemTable />
     </div>
   );
 };

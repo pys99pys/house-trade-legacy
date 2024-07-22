@@ -12,7 +12,7 @@ import {
 } from "../../utils/cityDataUtils";
 import { getBeforeYearMonth } from "../../utils/dateUtils";
 import { getValue } from "../../utils/storageUtils";
-import { FAVORITE_LIST } from "../../constants/storageKeys";
+import { STORAGE_KEY_FAVORITE_LIST } from "../../constants/storageKeys";
 import Select from "../select/Select";
 import Input from "../input/Input";
 import Button from "../button/Button";
@@ -45,7 +45,7 @@ const SearchForm: FC<SearchFormProps> = () => {
   }, []);
 
   useEffect(() => {
-    const favoriteList = getValue(FAVORITE_LIST) ?? [];
+    const favoriteList = getValue(STORAGE_KEY_FAVORITE_LIST) ?? [];
 
     setRegisteredFavorite(favoriteList.some((item) => item === form.sigungu));
   }, [form.sigungu]);
