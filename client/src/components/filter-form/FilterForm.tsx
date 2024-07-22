@@ -1,6 +1,6 @@
 import { FC } from "react";
-import { useRecoilState } from "recoil";
-import { filterFormState } from "../../stores/filterFormStore";
+
+import { useFilterFormState } from "../../stores/filterFormStore";
 import useTradeListQuery from "../../queries/useTradeListQuery";
 import Input from "../input/Input";
 import Button from "../button/Button";
@@ -11,7 +11,7 @@ interface FilterFormProps {}
 
 const FilterForm: FC<FilterFormProps> = () => {
   const { data } = useTradeListQuery();
-  const [state, setState] = useRecoilState(filterFormState);
+  const [state, setState] = useFilterFormState();
 
   const handleChangeApartName = (apartName: string) => {
     setState({

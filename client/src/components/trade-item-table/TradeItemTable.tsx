@@ -1,13 +1,9 @@
-import { FC, ReactNode, useEffect, useMemo, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { FC, ReactNode, useMemo, useState } from "react";
+
 import cx from "classnames";
 import useTradeListQuery, { TradeItem } from "../../queries/useTradeListQuery";
-import { searchFormState } from "../../stores/searchFormStore";
-import { filterFormState } from "../../stores/filterFormStore";
-import { getValue, setValue } from "../../utils/storageUtils";
 import {
   filterItems,
-  getStorageValue,
   parseToAmountText,
   parseToAreaSize,
   parseToFlatSize,
@@ -15,101 +11,87 @@ import {
   sliceItems,
   sortItems,
 } from "../../utils/tradeItemUtils";
-import { APART_LIST, ORDER } from "../../constants/storageKeys";
+
 import Pagination from "../pagination/Pagination";
 
 import styles from "./TradeItemTable.module.css";
+import { getValue } from "../../utils/storageUtils";
+import { STORAGE_KEY_ORDER } from "../../constants/storageKeys";
+import { OrderType } from "../../interfaces/Order";
+
+import { useSearchFormValue } from "../../stores/searchFormStore";
+import { useFilterFormValue } from "../../stores/filterFormStore";
 
 interface TradeItemTableProps {}
 
 const PER_PAGE = 15;
 
 const TradeItemTable: FC<TradeItemTableProps> = () => {
-  const search = useRecoilValue(searchFormState);
-  const filter = useRecoilValue(filterFormState);
-  const { isLoading, data } = useTradeListQuery();
+  const search = useSearchFormValue();
+  const filter = useFilterFormValue();
 
-  const [page, setPage] = useState<number>(1);
-  const [order, setOrder] = useState<[keyof TradeItem, "asc" | "desc"]>(
-    getValue(ORDER) ?? ["date", "desc"]
-  );
-  const [savedList, setSavedList] = useState<string[]>(
-    getValue(APART_LIST) ?? []
-  );
+  const [state, setState] = useState<{ page: number; order: OrderType }>({
+    page: 1,
+    order: getValue(STORAGE_KEY_ORDER) ?? ["date", "desc"],
+  });
+
+  const { isLoading, data } = useTradeListQuery();
 
   const filteredItems = useMemo(
     () =>
-      filterItems({
+      filterItems(data?.list ?? [], {
         code: search.sigungu,
-        items: data?.list ?? [],
-        savedItems: savedList,
+        savedItems: [],
         filter,
       }),
-    [data?.list, search.sigungu, savedList, filter]
+    [data?.list, search.sigungu, filter]
   );
 
   const list = useMemo(() => {
-    const sortedItems = sortItems({ items: filteredItems, order });
+    const sortedItems = sortItems({ items: filteredItems, order: state.order });
 
     return sliceItems({
       items: sortedItems,
-      page,
+      page: state.page,
       perPage: PER_PAGE,
     });
-  }, [filteredItems, order, page]);
+  }, [filteredItems, state.order, state.page]);
 
-  useEffect(() => {
-    setValue(APART_LIST, savedList);
-  }, [savedList]);
+  const onChangeOrder = (column: keyof TradeItem) =>
+    setState({
+      ...state,
+      order: [
+        column,
+        state.order[0] === column
+          ? state.order[1] === "asc"
+            ? "desc"
+            : "asc"
+          : "asc",
+      ],
+    });
 
-  useEffect(() => {
-    setValue(ORDER, order);
-  }, [order]);
-
-  function handleClickHeader(afterOrderColumn: keyof TradeItem) {
-    let afterOrderDirection: "asc" | "desc" = "asc";
-
-    if (order[0] === afterOrderColumn) {
-      afterOrderDirection = order[1] === "asc" ? "desc" : "asc";
-    }
-
-    setOrder([afterOrderColumn, afterOrderDirection]);
-  }
-
-  function handleClickRow(item: TradeItem) {
-    const value = getStorageValue(search.sigungu, item.name);
-    const target = savedList.find((savedItem) => savedItem === value);
-
-    if (target) {
-      setSavedList(savedList.filter((apart) => apart !== value) ?? []);
-    } else {
-      setSavedList([...savedList, value]);
-    }
-  }
-
-  if (isLoading) {
-    return <div className={styles.loading}>조회중...</div>;
-  }
-
-  if (!data) {
-    return null;
-  }
-
-  const isActived = (item: TradeItem) =>
-    savedList.some(
-      (savedItem) => savedItem === getStorageValue(search.sigungu, item.name)
-    );
+  const onChangePage = (page: number) => setState({ ...state, page });
 
   const createHeaderCell = (key: keyof TradeItem, label: string) => (
     <div>
-      <button onClick={() => handleClickHeader(key)}>
+      <button onClick={() => onChangeOrder(key)}>
         {label}
-        {order[0] === key && <span className={styles[order[1]]}>▾</span>}
+        {state.order[0] === key && (
+          <span className={styles[state.order[1]]}>▾</span>
+        )}
       </button>
     </div>
   );
 
   const createBodyCell = (label: ReactNode) => <div>{label}</div>;
+
+  if (isLoading) {
+    return <div className={styles.loading}>조회중...</div>;
+  }
+
+  if (!data || data.list.length === 0) {
+    return null;
+  }
 
   return (
     <div className={styles.tradeItemTable}>
@@ -126,8 +108,10 @@ const TradeItemTable: FC<TradeItemTableProps> = () => {
         {list.map((item, i) => (
           <div
             key={i}
-            className={cx(styles.row, { [styles.active]: isActived(item) })}
-            onClick={() => handleClickRow(item)}
+            className={cx(styles.row, {
+              [styles.active]: false,
+            })}
+            onClick={() => {}}
           >
             {createBodyCell(<>{item.date}</>)}
             {createBodyCell(<>{item.name}</>)}
@@ -144,13 +128,13 @@ const TradeItemTable: FC<TradeItemTableProps> = () => {
         ))}
       </div>
 
-      {filteredItems.length > PER_PAGE && (
+      {data.count > PER_PAGE && (
         <div className={styles.pagination}>
           <Pagination
             per={PER_PAGE}
-            total={filteredItems.length}
-            current={page}
-            onChange={setPage}
+            total={data.count}
+            current={state.page}
+            onChange={onChangePage}
           />
         </div>
       )}

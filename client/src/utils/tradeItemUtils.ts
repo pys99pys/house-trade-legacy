@@ -1,20 +1,21 @@
 import { TradeItem } from "../queries/useTradeListQuery";
-import { FilterForm } from "../interfaces/FilterForm";
+import { FilterFormType } from "../interfaces/FilterForm";
 
 export const getStorageValue = (code: string, name: string) =>
   `${code}_${name}`;
 
-export const filterItems = ({
-  code,
-  items,
-  savedItems,
-  filter,
-}: {
-  code: string;
-  items: TradeItem[];
-  savedItems: string[];
-  filter: FilterForm;
-}) =>
+export const filterItems = (
+  items: TradeItem[],
+  {
+    code,
+    savedItems,
+    filter,
+  }: {
+    code: string;
+    savedItems: string[];
+    filter: FilterFormType;
+  }
+) =>
   items.filter((item) => {
     const includedApartName = filter.apartName
       ? item.name.includes(filter.apartName)

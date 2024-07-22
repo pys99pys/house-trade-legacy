@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useRecoilValue } from "recoil";
-import { searchFormState } from "../stores/searchFormStore";
+import { useSearchFormValue } from "../stores/searchFormStore";
 
 export interface TradeItem {
   name: string;
@@ -28,7 +27,7 @@ const fetchTradeList = (params: Request) =>
   );
 
 const useTradeListQuery = () => {
-  const { sigungu, yearMonth } = useRecoilValue(searchFormState);
+  const { sigungu, yearMonth } = useSearchFormValue();
 
   return useQuery({
     queryKey: [sigungu, yearMonth],

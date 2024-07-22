@@ -1,5 +1,9 @@
 import { TradeItem } from "../queries/useTradeListQuery";
-import { APART_LIST, FAVORITE_LIST, ORDER } from "../constants/storageKeys";
+import {
+  APART_LIST,
+  FAVORITE_LIST,
+  STORAGE_KEY_ORDER,
+} from "../constants/storageKeys";
 
 export const setValue = (key: string, value: unknown) => {
   window.localStorage.setItem(key, JSON.stringify(value));
@@ -8,7 +12,7 @@ export const setValue = (key: string, value: unknown) => {
 export const getValue = <T extends string>(
   key: T
 ):
-  | (T extends typeof ORDER
+  | (T extends typeof STORAGE_KEY_ORDER
       ? [keyof TradeItem, "asc" | "desc"]
       : T extends typeof FAVORITE_LIST
       ? string[]

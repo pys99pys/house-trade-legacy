@@ -14,7 +14,7 @@ const parseTradeAmount = (str: string): number => {
   const [억, 천만_or_백만] = str.replace(" (신)", "").split("억");
   amount += Number(억) * 100000000;
 
-  if (천만_or_백만.includes("천")) {
+  if (천만_or_백만 && 천만_or_백만.includes("천")) {
     const [천만, 백만] = 천만_or_백만.split("천");
     amount += Number(천만) * 10000000;
 

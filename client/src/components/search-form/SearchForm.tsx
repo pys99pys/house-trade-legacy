@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
 
-import { searchFormState } from "../../stores/searchFormStore";
+import { useSetSearchFormState } from "../../stores/searchFormStore";
 import { SearchFormType } from "../../interfaces/SearchForm";
 import sigunguCodeObserver from "../../observers/sigunguCodeObserver";
 import {
@@ -23,7 +22,7 @@ import styles from "./SearchForm.module.css";
 interface SearchFormProps {}
 
 const SearchForm: FC<SearchFormProps> = () => {
-  const setSearchFormStore = useSetRecoilState(searchFormState);
+  const setSearchFormStore = useSetSearchFormState();
 
   const [registeredFavorite, setRegisteredFavorite] = useState(false);
   const [form, setForm] = useState<SearchFormType>({
