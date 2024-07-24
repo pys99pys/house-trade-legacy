@@ -7,22 +7,15 @@ import {
 } from "../../constants/storageKeys";
 
 const useComponentEffect = ({
-  order,
-  apartName,
-  onlyBaseSize,
-  onlySavedList,
+  state,
 }: ReturnType<typeof useComponentState>) => {
   useEffect(() => {
-    setValue(STORAGE_KEY_ORDER, order);
-  }, [order]);
+    setValue(STORAGE_KEY_ORDER, state.order);
+  }, [state.order]);
 
   useEffect(() => {
-    setValue(STORAGE_KEY_FILTER, {
-      apartName,
-      onlyBaseSize,
-      onlySavedList,
-    });
-  }, [apartName, onlyBaseSize, onlySavedList]);
+    setValue(STORAGE_KEY_FILTER, state.filter);
+  }, [state.filter]);
 };
 
 export default useComponentEffect;

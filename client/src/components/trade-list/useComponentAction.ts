@@ -10,29 +10,41 @@ interface Return {
 }
 
 const useComponentAction = ({
-  order,
-  onlyBaseSize,
-  onlySavedList,
-  setState,
+  state,
+  action,
 }: ReturnType<typeof useTradeListState>): Return => {
   const onChangeOrder = (column: OrderType[0]) =>
-    setState({
-      order: [
-        column,
-        order[0] === column ? (order[1] === "asc" ? "desc" : "asc") : "asc",
-      ],
+    action.setOrder([
+      column,
+      state.order[0] === column
+        ? state.order[1] === "asc"
+          ? "desc"
+          : "asc"
+        : "asc",
+    ]);
+
+  const onChangePage = (page: number) => action.setPage(page);
+
+  const onChangeApartName = (apartName: string) => {
+    action.setFilter({ ...state.filter, apartName });
+    action.setPage(1);
+  };
+
+  const onToggleOnlyBaseSize = () => {
+    action.setFilter({
+      ...state.filter,
+      onlyBaseSize: !state.filter.onlyBaseSize,
     });
+    action.setPage(1);
+  };
 
-  const onChangePage = (page: number) => setState({ page });
-
-  const onChangeApartName = (apartName: string) =>
-    setState({ apartName, page: 1 });
-
-  const onToggleOnlyBaseSize = () =>
-    setState({ onlyBaseSize: !onlyBaseSize, page: 1 });
-
-  const onToggleOnlySavedList = () =>
-    setState({ onlySavedList: !onlySavedList, page: 1 });
+  const onToggleOnlySavedList = () => {
+    action.setFilter({
+      ...state.filter,
+      onlySavedList: !state.filter.onlySavedList,
+    });
+    action.setPage(1);
+  };
 
   return {
     onChangeOrder,

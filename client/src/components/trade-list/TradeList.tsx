@@ -24,10 +24,12 @@ interface TradeItemTableProps {}
 const PER_PAGE = 15;
 
 const TradeItemTable: FC<TradeItemTableProps> = () => {
-  const state = useComponentState();
-  const action = useComponentAction(state);
+  const result = useComponentState();
+  const action = useComponentAction(result);
 
-  useComponentEffect(state);
+  useComponentEffect(result);
+
+  const { state } = result;
 
   const createHeaderCell = (key: keyof TradeItem, label: string) => (
     <div className={styles.headerCell}>
@@ -58,19 +60,19 @@ const TradeItemTable: FC<TradeItemTableProps> = () => {
           <Input
             size="small"
             placeholder="아파트명"
-            value={state.apartName}
+            value={state.filter.apartName}
             onChange={action.onChangeApartName}
           />
           <Button
             size="small"
-            color={state.onlyBaseSize ? "primary" : "default"}
+            color={state.filter.onlyBaseSize ? "primary" : "default"}
             onClick={action.onToggleOnlyBaseSize}
           >
             국민평수
           </Button>
           <Button
             size="small"
-            color={state.onlySavedList ? "primary" : "default"}
+            color={state.filter.onlySavedList ? "primary" : "default"}
             onClick={action.onToggleOnlySavedList}
           >
             저장 목록

@@ -11,71 +11,73 @@ import useTradeListQuery, { TradeItem } from "../../queries/useTradeListQuery";
 import { useSearchFormValue } from "../../stores/searchFormStore";
 import { FilterType } from "../../interfaces/Filter";
 
-type State = FilterType & {
+interface State {
   page: number;
   order: OrderType;
-};
+  filter: FilterType;
+}
 
-type SetState = {
-  setState: (state: Partial<State>) => void;
-};
+interface QueryState {
+  isLoading: boolean;
+  count: number;
+  filteredCount: number;
+  list: TradeItem[];
+}
 
-type Return = State &
-  SetState & {
-    isLoading: boolean;
-    count: number;
-    filteredCount: number;
-    list: TradeItem[];
-  };
+interface Action {
+  setPage: (page: number) => void;
+  setOrder: (page: OrderType) => void;
+  setFilter: (filter: FilterType) => void;
+}
+
+interface Return {
+  state: State & QueryState;
+  action: Action;
+}
 
 const PER_PAGE = 15;
-const savedOrder = getValue(STORAGE_KEY_ORDER);
-const savedFilter = getValue(STORAGE_KEY_FILTER);
 
 const useComponentState = (): Return => {
   const search = useSearchFormValue();
   const { isLoading, data } = useTradeListQuery();
 
-  const [state, setStateAction] = useState<State>({
-    page: 1,
-    order: savedOrder ?? ["date", "desc"],
-    apartName: savedFilter?.apartName ?? "",
-    onlyBaseSize: savedFilter?.onlyBaseSize ?? false,
-    onlySavedList: savedFilter?.onlySavedList ?? false,
-  });
-
-  const setState = (afterState: Partial<State>) =>
-    setStateAction({ ...state, ...afterState });
+  const [page, setPage] = useState<number>(1);
+  const [order, setOrder] = useState<OrderType>(
+    getValue(STORAGE_KEY_ORDER) ?? ["date", "desc"]
+  );
+  const [filter, setFilter] = useState<FilterType>(
+    getValue(STORAGE_KEY_FILTER) ?? {
+      apartName: "",
+      onlyBaseSize: false,
+      onlySavedList: false,
+    }
+  );
 
   const filteredItems = useMemo(
     () =>
       filterItems(data?.list ?? [], {
         code: search.sigungu,
         savedItems: [],
-        filter: state,
+        filter,
       }),
-    [data?.list, search.sigungu, state]
+    [data?.list, search.sigungu, filter]
   );
 
   const list = useMemo(() => {
-    const sortedItems = sortItems(filteredItems, state.order);
+    const sortedItems = sortItems(filteredItems, order);
 
     return sliceItems(sortedItems, {
-      page: state.page,
+      page,
       perPage: PER_PAGE,
     });
-  }, [filteredItems, state.order, state.page]);
+  }, [filteredItems, order, page]);
 
   const count = useMemo(() => data?.count ?? 0, [data?.count]);
   const filteredCount = useMemo(() => filteredItems.length, [filteredItems]);
 
   return {
-    ...state,
-    isLoading,
-    count,
-    filteredCount,
-    list,
-    setState,
+    state: { page, order, filter, count, filteredCount, list, isLoading },
+    action: { setPage, setOrder, setFilter },
   };
 };
 
