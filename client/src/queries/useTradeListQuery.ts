@@ -12,7 +12,7 @@ export interface TradeItem {
 }
 
 interface Request {
-  code: string;
+  cityCode: string;
   yearMonth: string;
 }
 
@@ -23,16 +23,16 @@ interface Response {
 
 const fetchTradeList = (params: Request) =>
   axios.get<Response>(
-    `http://127.0.0.1:7999?code=${params.code}&yearMonth=${params.yearMonth}`
+    `http://127.0.0.1:7999?code=${params.cityCode}&yearMonth=${params.yearMonth}`
   );
 
 const useTradeListQuery = () => {
-  const { sigungu, yearMonth } = useSearchFormValue();
+  const { cityCode, yearMonth } = useSearchFormValue();
 
   return useQuery({
-    queryKey: [sigungu, yearMonth],
-    enabled: !!sigungu && !!yearMonth,
-    queryFn: () => fetchTradeList({ code: sigungu, yearMonth }),
+    queryKey: [cityCode, yearMonth],
+    enabled: !!cityCode && !!yearMonth,
+    queryFn: () => fetchTradeList({ cityCode: cityCode, yearMonth }),
     select: (res) => res.data,
   });
 };

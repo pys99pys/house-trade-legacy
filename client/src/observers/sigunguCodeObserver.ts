@@ -1,6 +1,6 @@
 interface EventPayload {
   action: "add" | "remove" | "select";
-  code: string;
+  cityCode: string;
 }
 
 class sigunguCodeObserver {

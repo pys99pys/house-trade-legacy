@@ -4,11 +4,11 @@ import { useSetSearchFormState } from "../../stores/searchFormStore";
 import { SearchFormType } from "../../interfaces/SearchForm";
 import sigunguCodeObserver from "../../observers/sigunguCodeObserver";
 import {
-  getFirstSido,
-  getFirstCode,
-  getSidoItems,
-  getCodeItems,
-  getSidoWithCode,
+  getFirstCityName,
+  getFirstCityCode,
+  getCityNameItems,
+  getCityCodeItems,
+  getCityNameWithCode,
 } from "../../utils/cityDataUtils";
 import { getBeforeYearMonth } from "../../utils/dateUtils";
 import { getValue } from "../../utils/storageUtils";
@@ -26,16 +26,16 @@ const SearchForm: FC<SearchFormProps> = () => {
 
   const [registeredFavorite, setRegisteredFavorite] = useState(false);
   const [form, setForm] = useState<SearchFormType>({
-    sido: getFirstSido(),
-    sigungu: getFirstCode(),
+    cityName: getFirstCityName(),
+    cityCode: getFirstCityCode(),
     yearMonth: getBeforeYearMonth(),
   });
 
   useEffect(() => {
     sigunguCodeObserver.regist("search-form", (payload) => {
       const afterForm = {
-        sido: getSidoWithCode(payload.code),
-        sigungu: payload.code,
+        cityName: getCityNameWithCode(payload.cityCode),
+        cityCode: payload.cityCode,
         yearMonth: form.yearMonth,
       };
 
@@ -47,17 +47,17 @@ const SearchForm: FC<SearchFormProps> = () => {
   useEffect(() => {
     const favoriteList = getValue(STORAGE_KEY_FAVORITE_LIST) ?? [];
 
-    setRegisteredFavorite(favoriteList.some((item) => item === form.sigungu));
-  }, [form.sigungu]);
+    setRegisteredFavorite(favoriteList.some((item) => item === form.cityCode));
+  }, [form.cityCode]);
 
-  function handleChangeSido(sido: string) {
-    const firstSigungu = getCodeItems(sido)[0].code;
+  function handleChangeCityName(cityName: string) {
+    const firstSigungu = getCityCodeItems(cityName)[0].code;
 
-    setForm({ ...form, sido, sigungu: firstSigungu });
+    setForm({ ...form, cityName, cityCode: firstSigungu });
   }
 
-  function handleChangeSigungu(sigungu: string) {
-    setForm({ ...form, sigungu });
+  function handleChangeCityCode(cityCode: string) {
+    setForm({ ...form, cityCode });
   }
 
   function handleChangeYearMonth(value: string) {
@@ -73,7 +73,7 @@ const SearchForm: FC<SearchFormProps> = () => {
   function handleClickFavoriteAdd() {
     sigunguCodeObserver.notify("search-form", {
       action: "add",
-      code: form.sigungu,
+      cityCode: form.cityCode,
     });
 
     setRegisteredFavorite(true);
@@ -82,7 +82,7 @@ const SearchForm: FC<SearchFormProps> = () => {
   function handleClickFavoriteRemove() {
     sigunguCodeObserver.notify("search-form", {
       action: "remove",
-      code: form.sigungu,
+      cityCode: form.cityCode,
     });
 
     setRegisteredFavorite(false);
@@ -92,21 +92,24 @@ const SearchForm: FC<SearchFormProps> = () => {
     <div className={styles.searchForm}>
       <Select
         width="8rem"
-        value={form.sido}
+        value={form.cityName}
         placeholder="시/도"
-        options={getSidoItems().map((item) => ({ label: item, value: item }))}
-        onChange={handleChangeSido}
+        options={getCityNameItems().map((item) => ({
+          label: item,
+          value: item,
+        }))}
+        onChange={handleChangeCityName}
       />
 
       <Select
         width="12rem"
-        value={form.sigungu}
+        value={form.cityCode}
         placeholder="시/군/구"
-        options={getCodeItems(form.sido).map((item) => ({
+        options={getCityCodeItems(form.cityName).map((item) => ({
           label: item.name,
           value: item.code,
         }))}
-        onChange={handleChangeSigungu}
+        onChange={handleChangeCityCode}
       />
 
       <Input

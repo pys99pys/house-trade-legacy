@@ -1,22 +1,26 @@
-import cityCode from "../jsons/cityCode.json";
+import cityData from "../jsons/cityCode.json";
 
-export const getFirstSido = (): string => cityCode[0].name;
+export const getFirstCityName = (): string => cityData[0].name;
 
-export const getFirstCode = (): string => cityCode[0].children[0].code;
+export const getFirstCityCode = (): string => cityData[0].children[0].code;
 
-export const getSidoItems = (): string[] => cityCode.map((item) => item.name);
+export const getCityNameItems = (): string[] =>
+  cityData.map((item) => item.name);
 
-export const getCodeItems = (sido: string): { code: string; name: string }[] =>
-  cityCode.find((item) => item.name === sido)?.children ?? [];
+export const getCityCodeItems = (
+  cityName: string
+): { code: string; name: string }[] =>
+  cityData.find((item) => item.name === cityName)?.children ?? [];
 
-export const getSidoWithCode = (code: string): string =>
-  cityCode.find((item) => item.children.some((child) => child.code === code))
-    ?.name ?? "";
+export const getCityNameWithCode = (cityCode: string): string =>
+  cityData.find((item) =>
+    item.children.some((child) => child.code === cityCode)
+  )?.name ?? "";
 
-export const getSigunguWithCode = (code: string): string =>
-  cityCode
+export const getCityCodeWithCode = (cityCode: string): string =>
+  cityData
     .reduce(
       (acc, item) => [...acc, ...item.children],
       [] as { code: string; name: string }[]
     )
-    .find((item) => item.code === code)?.name ?? "";
+    .find((item) => item.code === cityCode)?.name ?? "";

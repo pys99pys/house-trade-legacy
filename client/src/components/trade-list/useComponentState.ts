@@ -56,11 +56,11 @@ const useComponentState = (): Return => {
   const filteredItems = useMemo(
     () =>
       filterItems(data?.list ?? [], {
-        code: search.sigungu,
+        cityCode: search.cityCode,
         savedItems: [],
         filter,
       }),
-    [data?.list, search.sigungu, filter]
+    [data?.list, search.cityCode, filter]
   );
 
   const list = useMemo(() => {

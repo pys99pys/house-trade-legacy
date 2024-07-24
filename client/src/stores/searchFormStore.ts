@@ -5,8 +5,8 @@ import { SearchFormType } from "../interfaces/SearchForm";
 export const searchFormState = atom<SearchFormType>({
   key: "searchFormState",
   default: {
-    sido: "",
-    sigungu: "",
+    cityName: "",
+    cityCode: "",
     yearMonth: "",
   },
 });

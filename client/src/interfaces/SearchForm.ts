@@ -1,5 +1,5 @@
 export interface SearchFormType {
-  sido: string;
-  sigungu: string;
+  cityName: string;
+  cityCode: string;
   yearMonth: string;
 }
