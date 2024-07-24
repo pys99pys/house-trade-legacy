@@ -17,12 +17,12 @@ export const getValue = <T extends string>(
   | (T extends typeof STORAGE_KEY_ORDER
       ? OrderType
       : T extends typeof STORAGE_KEY_FILTER
-      ? FilterType
-      : T extends typeof STORAGE_KEY_FAVORITE_LIST
-      ? string[]
-      : T extends typeof STORAGE_KEY_APART_LIST
-      ? string[]
-      : never)
+        ? FilterType
+        : T extends typeof STORAGE_KEY_FAVORITE_LIST
+          ? string[]
+          : T extends typeof STORAGE_KEY_APART_LIST
+            ? string[]
+            : never)
   | null => {
   try {
     const savedValue = window.localStorage.getItem(key);

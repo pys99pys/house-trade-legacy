@@ -1,6 +1,7 @@
-import { FC } from "react";
-import styles from "./Pagination.module.css";
 import cx from "classnames";
+import { FC } from "react";
+
+import styles from "./Pagination.module.css";
 
 interface PaginationProps {
   per: number;
@@ -16,9 +17,7 @@ const Pagination: FC<PaginationProps> = ({ per, total, current, onChange }) => {
   const start = Math.floor((current - 1) / MAX) * MAX + 1;
   const end = Math.min(start + MAX - 1, last);
   // const count =
-  const pageArray = new Array(end - start + 1)
-    .fill(null)
-    .map((_, i) => start + i);
+  const pageArray = new Array(end - start + 1).fill(null).map((_, i) => start + i);
 
   return (
     <ul className={styles.pagination}>

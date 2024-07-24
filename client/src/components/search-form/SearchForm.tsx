@@ -1,22 +1,21 @@
 import { FC, useEffect, useState } from "react";
 
-import { useSetSearchFormState } from "../../stores/searchFormStore";
+import { STORAGE_KEY_FAVORITE_LIST } from "../../constants/storageKeys";
 import { SearchFormType } from "../../interfaces/SearchForm";
 import sigunguCodeObserver from "../../observers/sigunguCodeObserver";
+import { useSetSearchFormState } from "../../stores/searchFormStore";
 import {
-  getFirstCityName,
-  getFirstCityCode,
-  getCityNameItems,
   getCityCodeItems,
+  getCityNameItems,
   getCityNameWithCode,
+  getFirstCityCode,
+  getFirstCityName,
 } from "../../utils/cityDataUtils";
 import { getBeforeYearMonth } from "../../utils/dateUtils";
 import { getValue } from "../../utils/storageUtils";
-import { STORAGE_KEY_FAVORITE_LIST } from "../../constants/storageKeys";
-import Select from "../select/Select";
-import Input from "../input/Input";
 import Button from "../button/Button";
-
+import Input from "../input/Input";
+import Select from "../select/Select";
 import styles from "./SearchForm.module.css";
 
 interface SearchFormProps {}
@@ -57,7 +56,7 @@ const SearchForm: FC<SearchFormProps> = () => {
   }
 
   function handleChangeCityCode(cityCode: string) {
-    setForm({ ...form, cityCode });
+    setForm({ ...form, cityCode: cityCode });
   }
 
   function handleChangeYearMonth(value: string) {
@@ -112,11 +111,7 @@ const SearchForm: FC<SearchFormProps> = () => {
         onChange={handleChangeCityCode}
       />
 
-      <Input
-        width="8rem"
-        value={form.yearMonth}
-        onChange={handleChangeYearMonth}
-      />
+      <Input width="8rem" value={form.yearMonth} onChange={handleChangeYearMonth} />
 
       <Button color="primary" onClick={handleClickSubmit}>
         검색

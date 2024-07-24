@@ -1,15 +1,12 @@
 import { useMemo, useState } from "react";
-import { OrderType } from "../../interfaces/Order";
-import { getValue } from "../../utils/storageUtils";
-import {
-  STORAGE_KEY_FILTER,
-  STORAGE_KEY_ORDER,
-} from "../../constants/storageKeys";
-import { filterItems, sliceItems, sortItems } from "../../utils/tradeItemUtils";
-import useTradeListQuery, { TradeItem } from "../../queries/useTradeListQuery";
 
-import { useSearchFormValue } from "../../stores/searchFormStore";
+import { STORAGE_KEY_FILTER, STORAGE_KEY_ORDER } from "../../constants/storageKeys";
 import { FilterType } from "../../interfaces/Filter";
+import { OrderType } from "../../interfaces/Order";
+import useTradeListQuery, { TradeItem } from "../../queries/useTradeListQuery";
+import { useSearchFormValue } from "../../stores/searchFormStore";
+import { getValue } from "../../utils/storageUtils";
+import { filterItems, sliceItems, sortItems } from "../../utils/tradeItemUtils";
 
 interface State {
   page: number;

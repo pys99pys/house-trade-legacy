@@ -1,7 +1,8 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RecoilRoot } from "recoil";
+
 import Layout from "./layouts/layout/Layout";
 import HouseTradeListPage from "./pages/house-trade-list-page/HouseTradeListPage";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function App() {
   return (

@@ -1,14 +1,10 @@
 import { useEffect } from "react";
-import useComponentState from "./useComponentState";
-import { setValue } from "../../utils/storageUtils";
-import {
-  STORAGE_KEY_FILTER,
-  STORAGE_KEY_ORDER,
-} from "../../constants/storageKeys";
 
-const useComponentEffect = ({
-  state,
-}: ReturnType<typeof useComponentState>) => {
+import { STORAGE_KEY_FILTER, STORAGE_KEY_ORDER } from "../../constants/storageKeys";
+import { setValue } from "../../utils/storageUtils";
+import useComponentState from "./useComponentState";
+
+const useComponentEffect = ({ state }: ReturnType<typeof useComponentState>) => {
   useEffect(() => {
     setValue(STORAGE_KEY_ORDER, state.order);
   }, [state.order]);

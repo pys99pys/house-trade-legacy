@@ -1,8 +1,9 @@
 import { FC } from "react";
-import TradeList from "../../components/trade-list/TradeList";
-import SearchForm from "../../components/search-form/SearchForm";
-import styles from "./HouseTradeListPage.module.css";
+
 import FavoriteList from "../../components/favorite-list/FavoriteList";
+import SearchForm from "../../components/search-form/SearchForm";
+import TradeList from "../../components/trade-list/TradeList";
+import styles from "./HouseTradeListPage.module.css";
 
 interface HouseTradeListPageProps {}
 

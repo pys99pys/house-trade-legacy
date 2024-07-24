@@ -1,6 +1,6 @@
+import cx from "classnames";
 import { FC, ReactNode } from "react";
 
-import cx from "classnames";
 import { TradeItem } from "../../queries/useTradeListQuery";
 import {
   parseToAmountText,
@@ -8,16 +8,13 @@ import {
   parseToFlatSize,
   parseToFloorText,
 } from "../../utils/tradeItemUtils";
-
+import Button from "../button/Button";
+import Input from "../input/Input";
 import Pagination from "../pagination/Pagination";
-
 import styles from "./TradeList.module.css";
-
-import useComponentState from "./useComponentState";
 import useComponentAction from "./useComponentAction";
 import useComponentEffect from "./useComponentEffect";
-import Input from "../input/Input";
-import Button from "../button/Button";
+import useComponentState from "./useComponentState";
 
 interface TradeItemTableProps {}
 
@@ -33,14 +30,9 @@ const TradeItemTable: FC<TradeItemTableProps> = () => {
 
   const createHeaderCell = (key: keyof TradeItem, label: string) => (
     <div className={styles.headerCell}>
-      <button
-        className={styles.headerButton}
-        onClick={() => action.onChangeOrder(key)}
-      >
+      <button className={styles.headerButton} onClick={() => action.onChangeOrder(key)}>
         {label}
-        {state.order[0] === key && (
-          <span className={styles[state.order[1]]}>▾</span>
-        )}
+        {state.order[0] === key && <span className={styles[state.order[1]]}>▾</span>}
       </button>
     </div>
   );

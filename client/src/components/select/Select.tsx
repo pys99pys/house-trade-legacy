@@ -1,4 +1,5 @@
 import { FC, useState } from "react";
+
 import styles from "./Select.module.css";
 
 interface SelectProps {
@@ -9,13 +10,7 @@ interface SelectProps {
   onChange: (value: string) => void;
 }
 
-const Select: FC<SelectProps> = ({
-  width,
-  options,
-  placeholder,
-  value,
-  onChange,
-}) => {
+const Select: FC<SelectProps> = ({ width, options, placeholder, value, onChange }) => {
   const [clicked, setClicked] = useState(false);
 
   const handleClick = () => {

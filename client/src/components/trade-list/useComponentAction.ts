@@ -16,11 +16,7 @@ const useComponentAction = ({
   const onChangeOrder = (column: OrderType[0]) =>
     action.setOrder([
       column,
-      state.order[0] === column
-        ? state.order[1] === "asc"
-          ? "desc"
-          : "asc"
-        : "asc",
+      state.order[0] === column ? (state.order[1] === "asc" ? "desc" : "asc") : "asc",
     ]);
 
   const onChangePage = (page: number) => action.setPage(page);

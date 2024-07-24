@@ -1,5 +1,5 @@
-import { TradeItem } from "../queries/useTradeListQuery";
 import { FilterType } from "../interfaces/Filter";
+import { TradeItem } from "../queries/useTradeListQuery";
 
 export const getStorageValue = (cityCode: string, cityCodeName: string) =>
   `${cityCode}_${cityCodeName}`;
@@ -26,9 +26,7 @@ export const filterItems = (
       : true;
 
     const includedSavedList = filter.onlySavedList
-      ? savedItems.some(
-          (savedItem) => savedItem === getStorageValue(cityCode, item.name)
-        )
+      ? savedItems.some((savedItem) => savedItem === getStorageValue(cityCode, item.name))
       : true;
 
     return includedApartName && includedBaseSize && includedSavedList;
@@ -71,5 +69,4 @@ export const parseToAreaSize = (originSize: number): number => {
 
 export const parseToFloorText = (floor: number): string => `${floor}층`;
 
-export const parseToAmountText = (amount: number): string =>
-  `${amount / 100000000}억원`;
+export const parseToAmountText = (amount: number): string => `${amount / 100000000}억원`;

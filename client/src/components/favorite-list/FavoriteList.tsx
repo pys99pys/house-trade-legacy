@@ -1,14 +1,10 @@
 import { FC, useEffect, useState } from "react";
 
-import sigunguCodeObserver from "../../observers/sigunguCodeObserver";
-import { getValue, setValue } from "../../utils/storageUtils";
-import {
-  getCityNameWithCode,
-  getCityCodeWithCode,
-} from "../../utils/cityDataUtils";
 import { STORAGE_KEY_FAVORITE_LIST } from "../../constants/storageKeys";
+import sigunguCodeObserver from "../../observers/sigunguCodeObserver";
+import { getCityCodeWithCode, getCityNameWithCode } from "../../utils/cityDataUtils";
+import { getValue, setValue } from "../../utils/storageUtils";
 import Button from "../button/Button";
-
 import styles from "./FavoriteList.module.css";
 
 interface FavoriteListProps {}
@@ -23,9 +19,7 @@ const sortCodes = (codes: string[]) => {
 };
 
 const FavoriteList: FC<FavoriteListProps> = () => {
-  const [codes, setCodes] = useState<string[]>(
-    getValue(STORAGE_KEY_FAVORITE_LIST) ?? []
-  );
+  const [codes, setCodes] = useState<string[]>(getValue(STORAGE_KEY_FAVORITE_LIST) ?? []);
 
   useEffect(() => {
     sigunguCodeObserver.regist("favorite-list", (payload) => {

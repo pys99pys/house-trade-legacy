@@ -1,6 +1,7 @@
-import { FC } from "react";
-import styles from "./Input.module.css";
 import cx from "classnames";
+import { FC } from "react";
+
+import styles from "./Input.module.css";
 
 interface InputProps {
   width?: string;
