@@ -1,133 +1,84 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 
-import { STORAGE_KEY_FAVORITE_LIST } from "../../constants/storageKeys";
-import { SearchFormType } from "../../interfaces/SearchForm";
-import sigunguCodeObserver from "../../observers/sigunguCodeObserver";
-import { useSetSearchFormState } from "../../stores/searchFormStore";
 import {
   getCityCodeItems,
+  getCityCodeWithCode,
   getCityNameItems,
   getCityNameWithCode,
-  getFirstCityCode,
-  getFirstCityName,
 } from "../../utils/cityDataUtils";
-import { getBeforeYearMonth } from "../../utils/dateUtils";
-import { getValue } from "../../utils/storageUtils";
 import Button from "../button/Button";
 import Input from "../input/Input";
 import Select from "../select/Select";
 import styles from "./SearchForm.module.css";
+import useSearchForm from "./useSearchForm";
 
 interface SearchFormProps {}
 
 const SearchForm: FC<SearchFormProps> = () => {
-  const setSearchFormStore = useSetSearchFormState();
-
-  const [registeredFavorite, setRegisteredFavorite] = useState(false);
-  const [form, setForm] = useState<SearchFormType>({
-    cityName: getFirstCityName(),
-    cityCode: getFirstCityCode(),
-    yearMonth: getBeforeYearMonth(),
-  });
-
-  useEffect(() => {
-    sigunguCodeObserver.regist("search-form", (payload) => {
-      const afterForm = {
-        cityName: getCityNameWithCode(payload.cityCode),
-        cityCode: payload.cityCode,
-        yearMonth: form.yearMonth,
-      };
-
-      setForm(afterForm);
-      setSearchFormStore(afterForm);
-    });
-  }, []);
-
-  useEffect(() => {
-    const favoriteList = getValue(STORAGE_KEY_FAVORITE_LIST) ?? [];
-
-    setRegisteredFavorite(favoriteList.some((item) => item === form.cityCode));
-  }, [form.cityCode]);
-
-  function handleChangeCityName(cityName: string) {
-    const firstSigungu = getCityCodeItems(cityName)[0].code;
-
-    setForm({ ...form, cityName, cityCode: firstSigungu });
-  }
-
-  function handleChangeCityCode(cityCode: string) {
-    setForm({ ...form, cityCode: cityCode });
-  }
-
-  function handleChangeYearMonth(value: string) {
-    const yearMonth = value.slice(0, 6).replace(/[^0-9]/g, "");
-
-    setForm({ ...form, yearMonth });
-  }
-
-  function handleClickSubmit() {
-    setSearchFormStore(form);
-  }
-
-  function handleClickFavoriteAdd() {
-    sigunguCodeObserver.notify("search-form", {
-      action: "add",
-      cityCode: form.cityCode,
-    });
-
-    setRegisteredFavorite(true);
-  }
-
-  function handleClickFavoriteRemove() {
-    sigunguCodeObserver.notify("search-form", {
-      action: "remove",
-      cityCode: form.cityCode,
-    });
-
-    setRegisteredFavorite(false);
-  }
+  const {
+    form,
+    registered,
+    favoriteList,
+    onChangeCityName,
+    onChangeCityCode,
+    onChangeYearMonth,
+    onRegistFavorite,
+    onRemoveFavorite,
+    onClickFavorite,
+    onSubmit,
+  } = useSearchForm();
 
   return (
     <div className={styles.searchForm}>
-      <Select
-        width="8rem"
-        value={form.cityName}
-        placeholder="시/도"
-        options={getCityNameItems().map((item) => ({
-          label: item,
-          value: item,
-        }))}
-        onChange={handleChangeCityName}
-      />
+      <form onSubmit={onSubmit}>
+        <Select
+          width="8rem"
+          value={form.cityName}
+          placeholder="시/도"
+          options={getCityNameItems().map((item) => ({
+            label: item,
+            value: item,
+          }))}
+          onChange={onChangeCityName}
+        />
 
-      <Select
-        width="12rem"
-        value={form.cityCode}
-        placeholder="시/군/구"
-        options={getCityCodeItems(form.cityName).map((item) => ({
-          label: item.name,
-          value: item.code,
-        }))}
-        onChange={handleChangeCityCode}
-      />
+        <Select
+          width="12rem"
+          value={form.cityCode}
+          placeholder="시/군/구"
+          options={getCityCodeItems(form.cityName).map((item) => ({
+            label: item.name,
+            value: item.code,
+          }))}
+          onChange={onChangeCityCode}
+        />
 
-      <Input width="8rem" value={form.yearMonth} onChange={handleChangeYearMonth} />
+        <Input width="8rem" value={form.yearMonth} onChange={onChangeYearMonth} />
 
-      <Button color="primary" onClick={handleClickSubmit}>
-        검색
-      </Button>
-
-      {registeredFavorite && (
-        <Button color="red" onClick={handleClickFavoriteRemove}>
-          삭제
+        <Button color="primary" onClick={onSubmit}>
+          검색
         </Button>
-      )}
 
-      {!registeredFavorite && (
-        <Button color="yellow" onClick={handleClickFavoriteAdd}>
-          즐겨찾기
-        </Button>
-      )}
+        {registered && (
+          <Button color="red" onClick={onRemoveFavorite}>
+            삭제
+          </Button>
+        )}
+
+        {!registered && (
+          <Button color="yellow" onClick={onRegistFavorite}>
+            즐겨찾기
+          </Button>
+        )}
+      </form>
+
+      <ul className={styles.favoriteList}>
+        {favoriteList.map((cityCode) => (
+          <Button key={cityCode} size="xsmall" onClick={() => onClickFavorite(cityCode)}>
+            {getCityNameWithCode(cityCode)} {getCityCodeWithCode(cityCode)}
+          </Button>
+        ))}
+      </ul>
     </div>
   );
 };

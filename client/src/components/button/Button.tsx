@@ -4,6 +4,7 @@ import { FC, ReactNode } from "react";
 import styles from "./Button.module.css";
 
 interface ButtonProps {
+  type?: "button" | "submit";
   size?: "default" | "large" | "small" | "xsmall";
   color?: "default" | "primary" | "red" | "yellow";
   children: ReactNode;
@@ -11,6 +12,7 @@ interface ButtonProps {
 }
 
 const Button: FC<ButtonProps> = ({
+  type = "button",
   size = "default",
   color = "default",
   children,
@@ -18,6 +20,7 @@ const Button: FC<ButtonProps> = ({
 }) => {
   return (
     <button
+      type={type}
       className={cx(styles.button, {
         [styles.defaultSize]: size === "default",
         [styles.largeSize]: size === "large",

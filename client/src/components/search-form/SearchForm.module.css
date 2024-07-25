@@ -1,4 +1,10 @@
-.searchForm {
+.searchForm form {
   display: flex;
   column-gap: 0.5rem;
+}
+
+.favoriteList {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
 }
