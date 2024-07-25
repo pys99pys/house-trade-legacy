@@ -12,27 +12,32 @@ import Button from "../button/Button";
 import Input from "../input/Input";
 import Pagination from "../pagination/Pagination";
 import styles from "./TradeList.module.css";
-import useComponentAction from "./useComponentAction";
-import useComponentEffect from "./useComponentEffect";
-import useComponentState from "./useComponentState";
+import useTradeList from "./useTradeList";
 
 interface TradeItemTableProps {}
 
 const PER_PAGE = 15;
 
 const TradeItemTable: FC<TradeItemTableProps> = () => {
-  const result = useComponentState();
-  const action = useComponentAction(result);
-
-  useComponentEffect(result);
-
-  const { state } = result;
+  const {
+    isLoading,
+    order,
+    filter,
+    page,
+    count,
+    list,
+    onChangeOrder,
+    onChangePage,
+    onChangeApartName,
+    onToggleOnlyBaseSize,
+    onToggleOnlySavedList,
+  } = useTradeList();
 
   const createHeaderCell = (key: keyof TradeItem, label: string) => (
     <div className={styles.headerCell}>
-      <button className={styles.headerButton} onClick={() => action.onChangeOrder(key)}>
+      <button className={styles.headerButton} onClick={() => onChangeOrder(key)}>
         {label}
-        {state.order[0] === key && <span className={styles[state.order[1]]}>▾</span>}
+        {order[0] === key && <span className={styles[order[1]]}>▾</span>}
       </button>
     </div>
   );
@@ -45,27 +50,27 @@ const TradeItemTable: FC<TradeItemTableProps> = () => {
     <>
       <div className={styles.filterForm}>
         <div className={styles.summary}>
-          검색결과: <strong>{state.filteredCount}</strong>건
+          검색결과: <strong>{count}</strong>건
         </div>
 
         <div className={styles.buttonList}>
           <Input
             size="small"
             placeholder="아파트명"
-            value={state.filter.apartName}
-            onChange={action.onChangeApartName}
+            value={filter.apartName}
+            onChange={onChangeApartName}
           />
           <Button
             size="small"
-            color={state.filter.onlyBaseSize ? "primary" : "default"}
-            onClick={action.onToggleOnlyBaseSize}
+            color={filter.onlyBaseSize ? "primary" : "default"}
+            onClick={onToggleOnlyBaseSize}
           >
             국민평수
           </Button>
           <Button
             size="small"
-            color={state.filter.onlySavedList ? "primary" : "default"}
-            onClick={action.onToggleOnlySavedList}
+            color={filter.onlySavedList ? "primary" : "default"}
+            onClick={onToggleOnlySavedList}
           >
             저장 목록
           </Button>
@@ -83,15 +88,15 @@ const TradeItemTable: FC<TradeItemTableProps> = () => {
         </div>
 
         <div className={styles.body}>
-          {state.isLoading && <div className={styles.loading}>조회중...</div>}
+          {isLoading && <div className={styles.loading}>조회중...</div>}
 
-          {!state.isLoading && state.list.length === 0 && (
+          {!isLoading && list.length === 0 && (
             <div className={styles.empty}>데이터 없음</div>
           )}
 
-          {!state.isLoading &&
-            state.list.length > 0 &&
-            state.list.map((item, i) => (
+          {!isLoading &&
+            list.length > 0 &&
+            list.map((item, i) => (
               <div
                 key={i}
                 className={cx(styles.row, {
@@ -114,13 +119,13 @@ const TradeItemTable: FC<TradeItemTableProps> = () => {
             ))}
         </div>
 
-        {state.filteredCount > PER_PAGE && (
+        {count > PER_PAGE && (
           <div className={styles.pagination}>
             <Pagination
               per={PER_PAGE}
-              total={state.filteredCount}
-              current={state.page}
-              onChange={action.onChangePage}
+              total={count}
+              current={page}
+              onChange={onChangePage}
             />
           </div>
         )}

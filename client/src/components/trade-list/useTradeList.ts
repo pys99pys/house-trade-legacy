@@ -8,33 +8,24 @@ import { useSearchFormValue } from "../../stores/searchFormStore";
 import { getValue } from "../../utils/storageUtils";
 import { filterItems, sliceItems, sortItems } from "../../utils/tradeItemUtils";
 
-interface State {
-  page: number;
+interface Return {
+  isLoading: boolean;
   order: OrderType;
   filter: FilterType;
-}
-
-interface QueryState {
-  isLoading: boolean;
+  page: number;
   count: number;
-  filteredCount: number;
   list: TradeItem[];
-}
 
-interface Action {
-  setPage: (page: number) => void;
-  setOrder: (page: OrderType) => void;
-  setFilter: (filter: FilterType) => void;
-}
-
-interface Return {
-  state: State & QueryState;
-  action: Action;
+  onChangeOrder: (column: OrderType[0]) => void;
+  onChangePage: (page: number) => void;
+  onChangeApartName: (apartName: string) => void;
+  onToggleOnlyBaseSize: () => void;
+  onToggleOnlySavedList: () => void;
 }
 
 const PER_PAGE = 15;
 
-const useComponentState = (): Return => {
+const useTradeList = (): Return => {
   const search = useSearchFormValue();
   const { isLoading, data } = useTradeListQuery();
 
@@ -69,13 +60,50 @@ const useComponentState = (): Return => {
     });
   }, [filteredItems, order, page]);
 
-  const count = useMemo(() => data?.count ?? 0, [data?.count]);
-  const filteredCount = useMemo(() => filteredItems.length, [filteredItems]);
+  const count = useMemo(() => filteredItems.length, [filteredItems]);
+
+  const onChangeOrder = (column: OrderType[0]) =>
+    setOrder([
+      column,
+      order[0] === column ? (order[1] === "asc" ? "desc" : "asc") : "asc",
+    ]);
+
+  const onChangePage = (page: number) => setPage(page);
+
+  const onChangeApartName = (apartName: string) => {
+    setFilter({ ...filter, apartName });
+    setPage(1);
+  };
+
+  const onToggleOnlyBaseSize = () => {
+    setFilter({
+      ...filter,
+      onlyBaseSize: !filter.onlyBaseSize,
+    });
+    setPage(1);
+  };
+
+  const onToggleOnlySavedList = () => {
+    setFilter({
+      ...filter,
+      onlySavedList: !filter.onlySavedList,
+    });
+    setPage(1);
+  };
 
   return {
-    state: { page, order, filter, count, filteredCount, list, isLoading },
-    action: { setPage, setOrder, setFilter },
+    isLoading,
+    order,
+    filter,
+    page,
+    count,
+    list,
+    onChangeOrder,
+    onChangePage,
+    onChangeApartName,
+    onToggleOnlyBaseSize,
+    onToggleOnlySavedList,
   };
 };
 
-export default useComponentState;
+export default useTradeList;
