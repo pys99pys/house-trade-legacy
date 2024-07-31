@@ -6,14 +6,14 @@ import { useSearchFormValue } from "../stores/searchFormStore";
 export interface TradeItem {
   isNewRecord: boolean;
   apartName: string;
-  buildedYear: string;
-  householdsNumber: string;
+  address: string;
+  buildedYear: number;
+  householdsNumber: number;
   tradeDate: string;
-  flatSize: string;
-  areaSize: string;
-  floor: string;
-  tradeAmount: string;
-  maxTradeAmount: string;
+  size: number;
+  floor: number;
+  tradeAmount: number;
+  maxTradeAmount: number;
 }
 
 interface Request {

@@ -8,22 +8,48 @@ const calcIsTradeListTable = (table: Cheerio<Element>): boolean =>
 const splitCellText = (text: string): string[] =>
   text.replace(/^\s+|\s+$/gm, "").split("\n");
 
+const parseNumber = (str: string): number => Number(str.replace(/[^0-9]/g, ""));
+
+const parseAmount = (amountText: string): number => {
+  let amount: number = 0;
+  let restText: string = amountText;
+
+  if (amountText.includes("억")) {
+    amount += Number(amountText.split("억")[0]) * 100_000_000;
+    restText = amountText.split("억")[1];
+  }
+
+  if (amountText.includes("천")) {
+    amount += Number(restText.split("천")[0]) * 10_000_000;
+    restText = restText.split("천")[1];
+  }
+
+  if (restText) {
+    amount += Number(restText) * 10_000;
+  }
+
+  return amount;
+};
+
 const parseFirstCell = (
   cell: Cheerio<Element>
 ): {
   apartName: string;
-  buildedYear: string;
-  householdsNumber: string;
+  buildedYear: number;
+  householdsNumber: number;
+  address: string;
 } => {
   const text = splitCellText(cell.text());
   const apartName = text[0];
-  const [buildedYear] = text[1].split(" ");
-  const [householdsNumber] = text[2].split(" / ");
+  const buildedYear = parseNumber(text[1].split(" ")[0]);
+  const householdsNumber = parseNumber(text[2].split(" / ")[0]);
+  const address = text[3];
 
   return {
     apartName,
     buildedYear,
     householdsNumber,
+    address,
   };
 };
 
@@ -31,19 +57,17 @@ const parseSecondCell = (
   cell: Cheerio<Element>
 ): {
   tradeDate: string;
-  flatSize: string;
-  areaSize: string;
-  floor: string;
+  size: number;
+  floor: number;
 } => {
   const text = splitCellText(cell.text());
-  const [tradeDate, floor] = text[0].split(" ");
-  const areaSize = text[1];
-  const [, flatSize] = text[2].replace("(", "").replace(")", "").split(",");
+  const tradeDate = "20" + text[0].split(" ")[0].replaceAll(".", "-");
+  const floor = parseNumber(text[0].split(" ")[1]);
+  const size = Number(text[1].replace("㎡", ""));
 
   return {
     tradeDate,
-    areaSize,
-    flatSize,
+    size,
     floor,
   };
 };
@@ -52,13 +76,15 @@ const parseThirdCell = (
   cell: Cheerio<Element>
 ): {
   isNewRecord: boolean;
-  tradeAmount: string;
-  maxTradeAmount: string;
+  tradeAmount: number;
+  maxTradeAmount: number;
 } => {
   const text = splitCellText(cell.text());
   const isNewRecord = text[0].includes("신");
-  const [tradeAmount] = text[0].split(" (신)");
-  const [maxTradeAmount] = text[1].split(" ");
+  const tradeAmount = parseAmount(text[0].split(" (신)")[0]);
+  const maxTradeAmount = parseAmount(
+    text[1].includes("↑") ? text[2].split(" ")[0] : text[1].split(" ")[0]
+  );
 
   return {
     isNewRecord,

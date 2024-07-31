@@ -2,6 +2,13 @@ import cx from "classnames";
 import { FC, ReactNode } from "react";
 
 import { TradeItem } from "../../queries/useTradeListQuery";
+import {
+  parseToAmountText,
+  parseToAreaSizeText,
+  parseToFlatSizeText,
+  parseToFloorText,
+  parseToHouseHoldsNumberText,
+} from "../../utils/tradeItemUtils";
 import Button from "../button/Button";
 import Input from "../input/Input";
 import Pagination from "../pagination/Pagination";
@@ -74,9 +81,9 @@ const TradeItemTable: FC<TradeItemTableProps> = () => {
       <div className={styles.table}>
         <div className={styles.header}>
           {createHeaderCell("tradeDate", "거래일")}
+          {createHeaderCell("address", "주소지")}
           {createHeaderCell("apartName", "아파트명")}
-          {createHeaderCell("areaSize", "평수")}
-          {createHeaderCell("floor", "층")}
+          {createHeaderCell("size", "평수")}
           {createHeaderCell("tradeAmount", "거래가격")}
           {createHeaderCell("maxTradeAmount", "신고가")}
         </div>
@@ -99,15 +106,28 @@ const TradeItemTable: FC<TradeItemTableProps> = () => {
                 onClick={() => {}}
               >
                 {createBodyCell(<>{item.tradeDate}</>)}
-                {createBodyCell(<>{item.apartName}</>)}
+                {createBodyCell(<>{item.address}</>)}
                 {createBodyCell(
                   <>
-                    {item.areaSize}평<small>({item.flatSize})</small>
+                    {item.apartName}
+                    <small>
+                      ({parseToFloorText(item.floor)}/
+                      {parseToHouseHoldsNumberText(item.householdsNumber)})
+                    </small>
                   </>
                 )}
-                {createBodyCell(<>{item.floor}</>)}
-                {createBodyCell(<>{item.tradeAmount}</>)}
-                {createBodyCell(<>{item.maxTradeAmount}</>)}
+                {createBodyCell(
+                  <>
+                    {parseToFlatSizeText(item.size)}
+                    <small>({parseToAreaSizeText(item.size)})</small>
+                  </>
+                )}
+                {createBodyCell(
+                  <span className={cx({ [styles.newRecord]: item.isNewRecord })}>
+                    {parseToAmountText(item.tradeAmount)}{" "}
+                  </span>
+                )}
+                {createBodyCell(<>{parseToAmountText(item.maxTradeAmount)}</>)}
               </div>
             ))}
         </div>

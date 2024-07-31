@@ -55,3 +55,20 @@ export const sliceItems = (
     perPage: number;
   }
 ) => items.slice((page - 1) * perPage, page * perPage);
+
+export const parseToFlatSizeText = (areaSize: number): string => {
+  const area = areaSize * 0.3025;
+  const addtionalSize = areaSize < 84 ? 8 : 9;
+
+  return `${Math.floor(area + addtionalSize)}평`;
+};
+
+export const parseToAreaSizeText = (originSize: number): string => {
+  return `${Math.round(originSize * 100) / 100}㎡`;
+};
+
+export const parseToHouseHoldsNumberText = (floor: number): string => `${floor}세대`;
+
+export const parseToFloorText = (floor: number): string => `${floor}층`;
+
+export const parseToAmountText = (amount: number): string => `${amount / 100000000}억원`;

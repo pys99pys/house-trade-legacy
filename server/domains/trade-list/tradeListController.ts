@@ -1,4 +1,3 @@
-import type { Context } from "@stricjs/router";
 import { getTradeList } from "./tradeListService";
 
 interface Payload {
