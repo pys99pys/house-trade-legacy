@@ -2,12 +2,6 @@ import cx from "classnames";
 import { FC, ReactNode } from "react";
 
 import { TradeItem } from "../../queries/useTradeListQuery";
-import {
-  parseToAmountText,
-  parseToAreaSize,
-  parseToFlatSize,
-  parseToFloorText,
-} from "../../utils/tradeItemUtils";
 import Button from "../button/Button";
 import Input from "../input/Input";
 import Pagination from "../pagination/Pagination";
@@ -79,12 +73,12 @@ const TradeItemTable: FC<TradeItemTableProps> = () => {
 
       <div className={styles.table}>
         <div className={styles.header}>
-          {createHeaderCell("date", "거래일")}
-          {createHeaderCell("name", "아파트명")}
-          {createHeaderCell("size", "평수")}
+          {createHeaderCell("tradeDate", "거래일")}
+          {createHeaderCell("apartName", "아파트명")}
+          {createHeaderCell("areaSize", "평수")}
           {createHeaderCell("floor", "층")}
-          {createHeaderCell("amount", "거래가격")}
-          {createHeaderCell("maxAmount", "신고가")}
+          {createHeaderCell("tradeAmount", "거래가격")}
+          {createHeaderCell("maxTradeAmount", "신고가")}
         </div>
 
         <div className={styles.body}>
@@ -104,17 +98,16 @@ const TradeItemTable: FC<TradeItemTableProps> = () => {
                 })}
                 onClick={() => {}}
               >
-                {createBodyCell(<>{item.date}</>)}
-                {createBodyCell(<>{item.name}</>)}
+                {createBodyCell(<>{item.tradeDate}</>)}
+                {createBodyCell(<>{item.apartName}</>)}
                 {createBodyCell(
                   <>
-                    {parseToFlatSize(item.size)}평
-                    <small>({parseToAreaSize(item.size)}㎡)</small>
+                    {item.areaSize}평<small>({item.flatSize})</small>
                   </>
                 )}
-                {createBodyCell(<>{parseToFloorText(item.floor)}</>)}
-                {createBodyCell(<>{parseToAmountText(item.amount)}</>)}
-                {createBodyCell(<>{parseToAmountText(item.maxAmount)}</>)}
+                {createBodyCell(<>{item.floor}</>)}
+                {createBodyCell(<>{item.tradeAmount}</>)}
+                {createBodyCell(<>{item.maxTradeAmount}</>)}
               </div>
             ))}
         </div>

@@ -31,7 +31,7 @@ const useTradeList = (): Return => {
 
   const [page, setPage] = useState<number>(1);
   const [order, setOrder] = useState<OrderType>(
-    getValue(STORAGE_KEY_ORDER) ?? ["date", "desc"]
+    getValue(STORAGE_KEY_ORDER) ?? ["tradeDate", "desc"]
   );
   const [filter, setFilter] = useState<FilterType>(
     getValue(STORAGE_KEY_FILTER) ?? {

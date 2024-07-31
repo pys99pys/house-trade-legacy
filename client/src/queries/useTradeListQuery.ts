@@ -4,12 +4,16 @@ import axios from "axios";
 import { useSearchFormValue } from "../stores/searchFormStore";
 
 export interface TradeItem {
-  name: string;
-  date: string;
-  size: number;
-  floor: number;
-  amount: number;
-  maxAmount: number;
+  isNewRecord: boolean;
+  apartName: string;
+  buildedYear: string;
+  householdsNumber: string;
+  tradeDate: string;
+  flatSize: string;
+  areaSize: string;
+  floor: string;
+  tradeAmount: string;
+  maxTradeAmount: string;
 }
 
 interface Request {

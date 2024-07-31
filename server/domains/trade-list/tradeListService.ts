@@ -1,110 +1,117 @@
-import { HTMLElement, parse } from "node-html-parser";
-import { APT2ME_URL } from "../../constants/url";
+import cheerio, { type Cheerio, type Element } from "cheerio";
 import type { TradeItem } from "./interfaces";
+import { APT2ME_URL } from "../../constants/url";
 
-const parseSize = (str: string): number => {
-  const [size] = str.split("㎡");
+const calcIsTradeListTable = (table: Cheerio<Element>): boolean =>
+  !!table.find(`td:contains("단지명")`).text();
 
-  return Number(size);
-};
+const splitCellText = (text: string): string[] =>
+  text.replace(/^\s+|\s+$/gm, "").split("\n");
 
-const parseTradeAmount = (str: string): number => {
-  let amount = 0;
+const parseFirstCell = (
+  cell: Cheerio<Element>
+): {
+  apartName: string;
+  buildedYear: string;
+  householdsNumber: string;
+} => {
+  const text = splitCellText(cell.text());
+  const apartName = text[0];
+  const [buildedYear] = text[1].split(" ");
+  const [householdsNumber] = text[2].split(" / ");
 
-  const [억, 천만_or_백만] = str.replace(" (신)", "").split("억");
-  amount += Number(억) * 100000000;
-
-  if (천만_or_백만 && 천만_or_백만.includes("천")) {
-    const [천만, 백만] = 천만_or_백만.split("천");
-    amount += Number(천만) * 10000000;
-
-    if (백만) {
-      amount += Number(백만) * 10000;
-    }
-  } else if (천만_or_백만) {
-    amount += Number(천만_or_백만) * 10000;
-  }
-
-  return amount;
-};
-
-const parseTableRow = (tr: HTMLElement): TradeItem => {
-  const item: TradeItem = {
-    name: "",
-    date: "",
-    size: -1,
-    floor: -1,
-    amount: -1,
-    maxAmount: -1,
+  return {
+    apartName,
+    buildedYear,
+    householdsNumber,
   };
-
-  tr.querySelectorAll("td").forEach((td, tdIndex) => {
-    const content = td.text.replace(/^\s+|\s+$/gm, "").split("\n");
-
-    if (tdIndex % 3 === 0) {
-      item.name = content[0];
-    }
-
-    if (tdIndex % 3 === 1) {
-      item.date = content[0];
-
-      content.forEach((t) => {
-        if (t.includes("㎡")) {
-          item.size = parseSize(t);
-        }
-
-        if (t.includes("층")) {
-          item.floor = Number(t.split("층")[0]);
-        }
-      });
-    }
-
-    if (tdIndex % 3 === 2) {
-      item.amount = parseTradeAmount(content[0]);
-      item.maxAmount = parseTradeAmount(
-        content[2].includes("억") ? content[2] : content[3]
-      );
-    }
-  });
-
-  return item;
 };
 
-const fetchTradeTables = async (payload: {
-  area: string;
-  createDt: string;
-  page: number;
-}): Promise<HTMLElement[]> => {
-  const response = await fetch(
-    `${APT2ME_URL}/apt/AptMonth.jsp?area=${payload.area}&createDt=${payload.createDt}&pages=${payload.page}`
-  );
-  const text = await response.text();
-  const root = parse(text);
+const parseSecondCell = (
+  cell: Cheerio<Element>
+): {
+  tradeDate: string;
+  flatSize: string;
+  areaSize: string;
+  floor: string;
+} => {
+  const text = splitCellText(cell.text());
+  const [tradeDate, floor] = text[0].split(" ");
+  const areaSize = text[1];
+  const [, flatSize] = text[2].replace("(", "").replace(")", "").split(",");
 
-  return root
-    .querySelectorAll("table")
-    .filter((table) =>
-      table.querySelectorAll("td").some((td) => td.text === "단지명")
-    );
+  return {
+    tradeDate,
+    areaSize,
+    flatSize,
+    floor,
+  };
 };
 
-const parseTradeList = async (payload: {
-  area: string;
-  createDt: string;
-  page: number;
-}) => {
+const parseThirdCell = (
+  cell: Cheerio<Element>
+): {
+  isNewRecord: boolean;
+  tradeAmount: string;
+  maxTradeAmount: string;
+} => {
+  const text = splitCellText(cell.text());
+  const isNewRecord = text[0].includes("신");
+  const [tradeAmount] = text[0].split(" (신)");
+  const [maxTradeAmount] = text[1].split(" ");
+
+  return {
+    isNewRecord,
+    tradeAmount,
+    maxTradeAmount,
+  };
+};
+
+const parseRow = (row: Cheerio<Element>): TradeItem => {
+  const firstCellItems = parseFirstCell(row.find("td:nth-child(1)"));
+  const secondCellitems = parseSecondCell(row.find("td:nth-child(2)"));
+  const thirdCellitems = parseThirdCell(row.find("td:nth-child(3)"));
+
+  return {
+    ...firstCellItems,
+    ...secondCellitems,
+    ...thirdCellitems,
+  };
+};
+
+const parseTradeList = (html: string): TradeItem[] => {
+  const $ = cheerio.load(html);
+  const tables = $("table");
+
   const list: TradeItem[] = [];
-  const tables = await fetchTradeTables(payload);
 
-  tables.forEach((table) => {
-    table.querySelectorAll("tr").forEach((tr, trIndex) => {
-      if (trIndex === 0) return;
+  tables.each((_, table) => {
+    const isTradeListTable = calcIsTradeListTable($(table));
 
-      list.push(parseTableRow(tr));
-    });
+    if (!isTradeListTable) {
+      return;
+    }
+
+    $(table)
+      .find("tr:not(:first-child)")
+      .each((_, row) => {
+        list.push(parseRow($(row)));
+      });
   });
 
   return list;
+};
+
+const fetchTradeList = async (payload: {
+  area: string;
+  createDt: string;
+  page: number;
+}): Promise<string> => {
+  const response = await fetch(
+    `${APT2ME_URL}/apt/AptMonth.jsp?area=${payload.area}&createDt=${payload.createDt}&pages=${payload.page}`
+  );
+
+  return await response.text();
 };
 
 export const getTradeList = async (area: string, createDt: string) => {
@@ -115,17 +122,19 @@ export const getTradeList = async (area: string, createDt: string) => {
   const list: any[] = [];
 
   while (!fetched) {
-    const result = await parseTradeList({
+    const html = await fetchTradeList({
       area,
       createDt,
       page,
     });
 
-    if (result.length === 0) {
+    const parsedList = parseTradeList(html);
+
+    if (parsedList.length === 0) {
       fetched = true;
     } else {
-      list.push(...result);
-      count += result.length;
+      list.push(...parsedList);
+      count += parsedList.length;
       page += 1;
     }
   }

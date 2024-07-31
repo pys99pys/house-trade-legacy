@@ -18,7 +18,7 @@ export const filterItems = (
 ) =>
   items.filter((item) => {
     const includedApartName = filter.apartName
-      ? item.name.includes(filter.apartName)
+      ? item.apartName.includes(filter.apartName)
       : true;
 
     const includedBaseSize = filter.onlyBaseSize
@@ -55,18 +55,3 @@ export const sliceItems = (
     perPage: number;
   }
 ) => items.slice((page - 1) * perPage, page * perPage);
-
-export const parseToFlatSize = (areaSize: number): number => {
-  const area = areaSize * 0.3025;
-  const addtionalSize = areaSize < 84 ? 8 : 9;
-
-  return Math.floor(area + addtionalSize);
-};
-
-export const parseToAreaSize = (originSize: number): number => {
-  return Math.round(originSize * 100) / 100;
-};
-
-export const parseToFloorText = (floor: number): string => `${floor}층`;
-
-export const parseToAmountText = (amount: number): string => `${amount / 100000000}억원`;
