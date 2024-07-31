@@ -114,29 +114,36 @@ const fetchTradeList = async (payload: {
   return await response.text();
 };
 
+async function* createTradeList({
+  area,
+  createDt,
+  page,
+}: {
+  area: string;
+  createDt: string;
+  page: number;
+}): AsyncGenerator<TradeItem[], void, unknown> {
+  const html = await fetchTradeList({
+    area,
+    createDt,
+    page,
+  });
+
+  const parsedList = parseTradeList(html);
+
+  if (parsedList.length > 0) {
+    yield parsedList;
+    yield* createTradeList({ area, createDt, page: page + 1 });
+  }
+}
+
 export const getTradeList = async (area: string, createDt: string) => {
-  let fetched = false;
-  let page = 1;
-  let count = 0;
+  let count: number = 0;
+  let list: TradeItem[] = [];
 
-  const list: any[] = [];
-
-  while (!fetched) {
-    const html = await fetchTradeList({
-      area,
-      createDt,
-      page,
-    });
-
-    const parsedList = parseTradeList(html);
-
-    if (parsedList.length === 0) {
-      fetched = true;
-    } else {
-      list.push(...parsedList);
-      count += parsedList.length;
-      page += 1;
-    }
+  for await (const result of createTradeList({ area, createDt, page: 1 })) {
+    count += result.length;
+    list = list.concat(result);
   }
 
   return { count, list };
