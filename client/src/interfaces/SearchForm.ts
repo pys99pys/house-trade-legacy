@@ -3,3 +3,8 @@ export interface SearchFormType {
   cityCode: string;
   yearMonth: string;
 }
+
+export interface FavoriteItem {
+  cityCode: string;
+  label: string;
+}

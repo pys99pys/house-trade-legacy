@@ -1,9 +1,10 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
 import { STORAGE_KEY_FAVORITE_LIST } from "../../constants/storageKeys";
-import { SearchFormType } from "../../interfaces/SearchForm";
+import { FavoriteItem, SearchFormType } from "../../interfaces/SearchForm";
 import { useSetSearchFormState } from "../../stores/searchFormStore";
 import {
+  getCityCodeWithCode,
   getCityNameWithCode,
   getFirstCityCode,
   getFirstCityName,
@@ -13,7 +14,7 @@ import { getValue, setValue } from "../../utils/storageUtils";
 
 interface Return {
   form: SearchFormType;
-  favoriteList: string[];
+  favoriteList: FavoriteItem[];
   registered: boolean;
   onChangeCityName: (cityName: string) => void;
   onChangeCityCode: (cityCode: string) => void;
@@ -27,7 +28,7 @@ interface Return {
 const useSearchForm = (): Return => {
   const setSearchFormStore = useSetSearchFormState();
 
-  const [favoriteList, setFavoriteList] = useState<string[]>(
+  const [favoriteCityCodes, setFavoriteCityCodes] = useState<string[]>(
     getValue(STORAGE_KEY_FAVORITE_LIST) ?? []
   );
   const [form, setForm] = useState<SearchFormType>({
@@ -36,14 +37,25 @@ const useSearchForm = (): Return => {
     yearMonth: getBeforeYearMonth(),
   });
 
+  const favoriteList = useMemo(
+    () =>
+      favoriteCityCodes
+        .map((cityCode) => ({
+          cityCode,
+          label: `${getCityNameWithCode(cityCode)} ${getCityCodeWithCode(cityCode)}`,
+        }))
+        .sort((a, b) => (a.label > b.label ? 1 : -1)),
+    [favoriteCityCodes]
+  );
+
   const registered = useMemo(
-    () => favoriteList.some((item) => item === form.cityCode),
-    [favoriteList, form.cityCode]
+    () => favoriteCityCodes.some((item) => item === form.cityCode),
+    [favoriteCityCodes, form.cityCode]
   );
 
   useEffect(() => {
-    setValue(STORAGE_KEY_FAVORITE_LIST, favoriteList);
-  }, [favoriteList]);
+    setValue(STORAGE_KEY_FAVORITE_LIST, favoriteCityCodes);
+  }, [favoriteCityCodes]);
 
   const onChangeCityName = (cityName: string) => setForm({ ...form, cityName });
 
@@ -56,11 +68,11 @@ const useSearchForm = (): Return => {
     });
 
   const onRegistFavorite = () => {
-    setFavoriteList([...favoriteList, form.cityCode]);
+    setFavoriteCityCodes([...favoriteCityCodes, form.cityCode]);
   };
 
   const onRemoveFavorite = () => {
-    setFavoriteList(favoriteList.filter((item) => item !== form.cityCode));
+    setFavoriteCityCodes(favoriteCityCodes.filter((item) => item !== form.cityCode));
   };
 
   const onClickFavorite = (cityCode: string) => {

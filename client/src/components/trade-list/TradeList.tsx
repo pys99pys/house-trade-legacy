@@ -3,6 +3,7 @@ import { FC, ReactNode } from "react";
 
 import { TradeItem } from "../../queries/useTradeListQuery";
 import {
+  createSavedTradeItemValue,
   parseToAmountText,
   parseToAreaSizeText,
   parseToFlatSizeText,
@@ -23,12 +24,15 @@ const TradeItemTable: FC<TradeItemTableProps> = () => {
   const {
     isLoading,
     order,
+    search,
     filter,
     page,
     count,
     list,
+    savedList,
     onChangeOrder,
     onChangePage,
+    onClickList,
     onChangeApartName,
     onToggleOnlyBaseSize,
     onToggleOnlySavedList,
@@ -101,9 +105,13 @@ const TradeItemTable: FC<TradeItemTableProps> = () => {
               <div
                 key={i}
                 className={cx(styles.row, {
-                  [styles.active]: false,
+                  [styles.active]: savedList.some(
+                    (savedItem) =>
+                      savedItem ===
+                      createSavedTradeItemValue({ cityCode: search.cityCode, ...item })
+                  ),
                 })}
-                onClick={() => {}}
+                onClick={() => onClickList(item)}
               >
                 {createBodyCell(<>{item.tradeDate}</>)}
                 {createBodyCell(<>{item.address}</>)}

@@ -1,11 +1,6 @@
 import { FC } from "react";
 
-import {
-  getCityCodeItems,
-  getCityCodeWithCode,
-  getCityNameItems,
-  getCityNameWithCode,
-} from "../../utils/cityDataUtils";
+import { getCityCodeItems, getCityNameItems } from "../../utils/cityDataUtils";
 import Button from "../button/Button";
 import Input from "../input/Input";
 import Select from "../select/Select";
@@ -73,9 +68,13 @@ const SearchForm: FC<SearchFormProps> = () => {
       </form>
 
       <ul className={styles.favoriteList}>
-        {favoriteList.map((cityCode) => (
-          <Button key={cityCode} size="xsmall" onClick={() => onClickFavorite(cityCode)}>
-            {getCityNameWithCode(cityCode)} {getCityCodeWithCode(cityCode)}
+        {favoriteList.map((item) => (
+          <Button
+            key={item.cityCode}
+            size="xsmall"
+            onClick={() => onClickFavorite(item.cityCode)}
+          >
+            {item.label}
           </Button>
         ))}
       </ul>

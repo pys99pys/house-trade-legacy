@@ -1,18 +1,27 @@
 import { FilterType } from "../interfaces/Filter";
 import { TradeItem } from "../queries/useTradeListQuery";
 
-export const getStorageValue = (cityCode: string, cityCodeName: string) =>
-  `${cityCode}_${cityCodeName}`;
+export const createSavedTradeItemValue = ({
+  cityCode,
+  apartName,
+  address,
+  size,
+}: {
+  cityCode: string;
+  apartName: string;
+  address: string;
+  size: number;
+}) => `${cityCode}_${apartName}_${address}_${size}`;
 
 export const filterItems = (
   items: TradeItem[],
   {
     cityCode,
-    savedItems,
+    savedList,
     filter,
   }: {
     cityCode: string;
-    savedItems: string[];
+    savedList: string[];
     filter: FilterType;
   }
 ) =>
@@ -26,7 +35,16 @@ export const filterItems = (
       : true;
 
     const includedSavedList = filter.onlySavedList
-      ? savedItems.some((savedItem) => savedItem === getStorageValue(cityCode, item.name))
+      ? savedList.some(
+          (savedItem) =>
+            savedItem ===
+            createSavedTradeItemValue({
+              cityCode,
+              apartName: item.apartName,
+              address: item.address,
+              size: item.size,
+            })
+        )
       : true;
 
     return includedApartName && includedBaseSize && includedSavedList;
