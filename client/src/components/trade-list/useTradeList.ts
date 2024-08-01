@@ -14,6 +14,7 @@ import { getValue, setValue } from "../../utils/storageUtils";
 import {
   createSavedTradeItemValue,
   filterItems,
+  parseToAverageAmountText,
   sliceItems,
   sortItems,
 } from "../../utils/tradeItemUtils";
@@ -24,6 +25,7 @@ interface Return {
   search: SearchFormType;
   filter: FilterType;
   page: number;
+  averageAmount: number;
   count: number;
   list: TradeItem[];
   savedList: string[];
@@ -76,6 +78,7 @@ const useTradeList = (): Return => {
     });
   }, [filteredItems, order, page]);
 
+  const averageAmount = useMemo(() => parseToAverageAmountText(list), [list]);
   const count = useMemo(() => filteredItems.length, [filteredItems]);
 
   useEffect(() => setValue(STORAGE_KEY_ORDER, order), [order]);
@@ -128,6 +131,7 @@ const useTradeList = (): Return => {
     search,
     filter,
     page,
+    averageAmount,
     count,
     list,
     savedList,
